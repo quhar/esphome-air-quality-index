@@ -25,24 +25,24 @@ void AirQualityIndexComponent::dump_config() {
   LOG_SENSOR("", "Air Quality Index", this);
 
   switch (this->aqi_type_) {
-    case AQI:
-      ESP_LOGCONFIG(TAG, "Air Quality Index Type: AQI");
-      break;
-    default:
-      ESP_LOGE(TAG, "Invalid air quality index type!");
-      break;
+  case AQI:
+    ESP_LOGCONFIG(TAG, "Air Quality Index Type: AQI");
+    break;
+  default:
+    ESP_LOGE(TAG, "Invalid air quality index type!");
+    break;
   };
 
   switch (this->polutant_type_) {
-    case PM_2_5:
-      ESP_LOGCONFIG(TAG, "Polutant type: PM2.5μg/m³");
-      break;
-    case PM_10:
-      ESP_LOGCONFIG(TAG, "Polutant type: PM10μg/m³");
-      break;
-    default:
-      ESP_LOGE(TAG, "Invalid polutant type!");
-      break;
+  case PM_2_5:
+    ESP_LOGCONFIG(TAG, "Polutant type: PM2.5μg/m³");
+    break;
+  case PM_10:
+    ESP_LOGCONFIG(TAG, "Polutant type: PM10μg/m³");
+    break;
+  default:
+    ESP_LOGE(TAG, "Invalid polutant type!");
+    break;
   };
 
   ESP_LOGCONFIG(TAG, "Source");
@@ -70,23 +70,23 @@ void AirQualityIndexComponent::loop() {
 
   float calculated_aqi = 0.0;
   switch (this->aqi_type_) {
-    case AQI:
-      switch (this->polutant_type_) {
-        case PM_2_5:
-          calculated_aqi =
-              AirQualityIndexComponent::calculate_aqi_pm_2_5_(this->pm_);
-          break;
-        case PM_10:
-          calculated_aqi =
-              AirQualityIndexComponent::calculate_aqi_pm_10_(this->pm_);
-          break;
-        default:
-          ESP_LOGE(TAG, "Invalid AQI type!");
-          break;
-      };
+  case AQI:
+    switch (this->polutant_type_) {
+    case PM_2_5:
+      calculated_aqi =
+          AirQualityIndexComponent::calculate_aqi_pm_2_5_(this->pm_);
+      break;
+    case PM_10:
+      calculated_aqi =
+          AirQualityIndexComponent::calculate_aqi_pm_10_(this->pm_);
       break;
     default:
-      ESP_LOGE(TAG, "Invalid air quality index type!");
+      ESP_LOGE(TAG, "Invalid AQI type!");
+      break;
+    };
+    break;
+  default:
+    ESP_LOGE(TAG, "Invalid air quality index type!");
   }
   if (calculated_aqi < 0) {
     ESP_LOGW(TAG, "Invalid AQI value. %d", (int)calculated_aqi);
@@ -102,7 +102,8 @@ void AirQualityIndexComponent::loop() {
 
 int AirQualityIndexComponent::get_grid_index_(
     float value, const float array[AQI_NUMBER_OF_LEVELS][2]) {
-  if (value == 0) return 0;
+  if (value == 0)
+    return 0;
   for (int i = 0; i < AQI_NUMBER_OF_LEVELS; i++) {
     if (value > array[i][0] && value <= array[i][1]) {
       return i;
@@ -138,5 +139,5 @@ float AirQualityIndexComponent::calculate_aqi_from_array_(
   return float(aqi);
 }
 
-}  // namespace air_quality_index
-}  // namespace esphome
+} // namespace air_quality_index
+} // namespace esphome
